@@ -12,10 +12,8 @@ import java.util.Map;
 
 /**
  * Controller handling user authentication operations including registration and login.
- * All endpoints are prefixed with /api/users for consistent API structure.
  */
 @RestController
-@RequestMapping("/api/users")
 @CrossOrigin  // Enables cross-origin requests, important for frontend integration
 public class UserController {
 
@@ -27,23 +25,27 @@ public class UserController {
      * Validates the incoming user data and creates a new user account if validation passes.
      * Returns 400 BAD REQUEST if username/email already exists.
      */
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody UserHibernate user,
-                                        @RequestParam(required = false, defaultValue = "false") boolean isAdmin) {
+    @PostMapping("/signup")
+    public ResponseEntity<?> register(@Valid @RequestBody UserHibernate user) {
         if (user.getPassword() == null || user.getPassword().trim().isEmpty()) {
             return ResponseEntity.badRequest().body("Password cannot be empty");
         }
 
-        if (isAdmin) {
-            user.setRole(0);
-            userService.registerAdmin(user);
-            return ResponseEntity.ok("Admin user registered successfully with role 0");
-        } else {
-            userService.register(user);
-            return ResponseEntity.ok("Regular user registered successfully with role 1");
-        }
+        userService.register(user);
+        return ResponseEntity.ok("User registered successfully");
     }
 
+    // Endpoint for admin registration
+    @PostMapping("/signup/admin")
+    public ResponseEntity<?> registerAdmin(@Valid @RequestBody UserHibernate user) {
+        if (user.getPassword() == null || user.getPassword().trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("Password cannot be empty");
+        }
+
+        user.setRole(0); // Set admin role
+        userService.registerAdmin(user);
+        return ResponseEntity.ok("Admin user registered successfully");
+    }
 
     /**
      * Handles user login requests.
@@ -59,7 +61,6 @@ public class UserController {
         response.put("role", role); // Include role in response
         response.put("message", "Login successful");
         return ResponseEntity.ok(response);
-
     }
 
     @PostMapping("/logout")
@@ -70,5 +71,3 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 }
-
-

@@ -6,11 +6,10 @@ import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
-import java.awt.print.Pageable;
 import java.util.List;
 
 @Repository
-@Transactional
+// @Transactional
 public class OrderDao extends AbstractHibernateDao<OrderHibernate> {
     public OrderDao() {
         super(OrderHibernate.class);

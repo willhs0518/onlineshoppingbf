@@ -68,6 +68,7 @@ public class WatchlistService {
             session.close();
         }
     }
+
     @Transactional
     public void removeFromWatchlist(String authenticatedUsername, Long productId) {
         Session session = watchlistDao.openSession();

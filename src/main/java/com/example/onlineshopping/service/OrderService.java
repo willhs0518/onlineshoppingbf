@@ -10,7 +10,6 @@ import com.example.onlineshopping.domain.hibernate.UserHibernate;
 import com.example.onlineshopping.dto.OrderDTO;
 import com.example.onlineshopping.dto.OrderItemDTO;
 import com.example.onlineshopping.dto.OrderItemRequestDTO;
-import com.example.onlineshopping.dto.OrderRequestDTO;
 import com.example.onlineshopping.exception.NotEnoughInventoryException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -125,15 +124,6 @@ public class OrderService {
     /**
      * Retrieves the status of an order.
      */
-//    @Transactional
-//    public String getOrderStatus(Long orderId) {
-//        OrderHibernate order = orderDao.findById(orderId);
-//        if (order == null) {
-//            throw new IllegalArgumentException("Order not found: " + orderId);
-//        }
-//
-//        return order.getOrderStatus();
-//    }
     @Transactional
     public String getOrderStatus(Long orderId, String authenticatedUsername) {
         Session session = orderDao.openSession();
@@ -234,67 +224,7 @@ public class OrderService {
             session.close();
         }
     }
-//    @Transactional
-//    public List<OrderDTO> getUserOrders(Long userId) {
-//        Session session = orderDao.openSession();
-//        try {
-//            String hql = "FROM OrderHibernate o WHERE o.userHibernate.userId = :userId ORDER BY o.datePlaced DESC";
-//            List<OrderHibernate> orders = session.createQuery(hql, OrderHibernate.class)
-//                    .setParameter("userId", userId)
-//                    .list();
-//
-//            return orders.stream()
-//                    .map(order -> new OrderDTO(
-//                            order.getOrderId(),
-//                            order.getDatePlaced(),
-//                            order.getOrderStatus(),
-//                            order.getOrderItems().stream()
-//                                    .map(item -> new OrderItemDTO(
-//                                            item.getProductHibernate().getProductId(),
-//                                            item.getProductHibernate().getName(),
-//                                            item.getQuantity(),
-//                                            item.getPurchasedPrice()))
-//                                    .collect(Collectors.toList())
-//                    ))
-//                    .collect(Collectors.toList());
-//
-//        } finally {
-//            session.close();
-//        }
-//    }
 
-//    @Transactional
-//    public List<OrderItemDTO> getTopFrequentItems(Long userId) {
-//        Session session = orderDao.openSession();
-//        try {
-//            String hql = "SELECT oi.productHibernate.productId, oi.productHibernate.name, " +
-//                    "SUM(oi.quantity) AS totalQuantity, " +
-//                    "MAX(oi.purchasedPrice), " +
-//                    "MAX(o.datePlaced) " +
-//                    "FROM OrderItemHibernate oi " +
-//                    "JOIN oi.orderHibernate o " +
-//                    "WHERE o.userHibernate.userId = :userId AND o.orderStatus != 'Canceled' " +
-//                    "GROUP BY oi.productHibernate.productId, oi.productHibernate.name " +  //  Only group by productId & name
-//                    "ORDER BY totalQuantity DESC, oi.productHibernate.productId ASC";
-//
-//            Query<Object[]> query = session.createQuery(hql, Object[].class)
-//                    .setParameter("userId", userId)
-//                    .setMaxResults(3);
-//
-//            return query.list().stream()
-//                    .map(row -> new OrderItemDTO(
-//                            (Long) row[0],   // productId
-//                            (String) row[1], // productName
-//                            ((Number) row[2]).intValue(), // Convert SUM result safely
-//                            ((Number) row[3]).doubleValue(),  //  PurchasedPrice is aggregated
-//                            (LocalDateTime) row[4]  //  Get latest datePlaced
-//                    ))
-//                    .collect(Collectors.toList());
-//
-//        } finally {
-//            session.close();
-//        }
-//    }
     @Transactional
     public List<OrderItemDTO> getTopFrequentItems(String authenticatedUsername) {
         Session session = orderDao.openSession();

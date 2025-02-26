@@ -3,6 +3,7 @@ package com.example.onlineshopping.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -31,16 +32,30 @@ public class SecurityConfig {
         http
                 .csrf().disable()
                 .authorizeHttpRequests(auth -> auth
-                        .antMatchers("/api/users/register", "/api/users/login").permitAll()
-                        .antMatchers("/api/users/registeradmin").permitAll() // Allow public access
-                        .antMatchers("/api/admin/**").hasAuthority("ROLE_0") // Allow only admins
-                        .anyRequest().authenticated()  // Other endpoints require authentication
+                        // Public endpoints that don't require authentication
+                        .antMatchers("/signup", "/login", "/signup/admin").permitAll()
+
+                        // Admin-specific endpoints (ROLE_0 is admin)
+                        .antMatchers(HttpMethod.POST, "/products").hasAuthority("ROLE_0")
+                        .antMatchers(HttpMethod.PATCH, "/products/**").hasAuthority("ROLE_0")
+                        .antMatchers("/orders/*/complete").hasAuthority("ROLE_0")
+                        .antMatchers("/products/profit/**").hasAuthority("ROLE_0")
+                        .antMatchers("/products/popular/**").hasAuthority("ROLE_0")
+
+                        // User-specific endpoints (ROLE_1 is user)
+                        .antMatchers("/watchlist/**").hasAuthority("ROLE_1")
+                        .antMatchers("/products/frequent/**").hasAuthority("ROLE_1")
+                        .antMatchers("/products/recent/**").hasAuthority("ROLE_1")
+
+                        // Shared endpoints with different behavior based on role
+                        .antMatchers("/products/all", "/products/*", "/orders/**").authenticated()
+
+                        // Any other request requires authentication
+                        .anyRequest().authenticated()
                 )
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
-        ;
 
         return http.build();
     }
-
 }

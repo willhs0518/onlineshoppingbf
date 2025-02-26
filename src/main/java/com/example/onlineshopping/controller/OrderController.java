@@ -1,118 +1,118 @@
 package com.example.onlineshopping.controller;
 
 import com.example.onlineshopping.dto.OrderDTO;
-import com.example.onlineshopping.dto.OrderItemDTO;
 import com.example.onlineshopping.dto.OrderRequestDTO;
-import com.example.onlineshopping.exception.OrderCancellationException;
+import com.example.onlineshopping.service.AdminService;
 import com.example.onlineshopping.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/api/orders")
 @CrossOrigin
 public class OrderController {
 
     @Autowired
     private OrderService orderService;
 
+    @Autowired
+    private AdminService adminService;
+
+    // Helper method to check if user has admin role
+    private boolean isAdmin(Authentication authentication) {
+        return authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_0"));
+    }
+
     // Place a new order
-
-    @PostMapping("/purchase")
-    public ResponseEntity<?> placeOrder(
-            @RequestBody OrderRequestDTO orderRequest,
-            @AuthenticationPrincipal UserDetails userDetails // Extract username
-    ) {
-        String authenticatedUsername = userDetails.getUsername();  // Get username instead
-        Long orderId = orderService.placeOrder(authenticatedUsername, orderRequest.getItems());
-        return ResponseEntity.ok("Order created in Processing status. Order ID: " + orderId);
-    }
-
-    //Cancel an order
-    @PatchMapping("/{orderId}/cancel")
-    public ResponseEntity<?> cancelOrder(@PathVariable Long orderId) {
-        boolean isCanceled = orderService.cancelOrder(orderId);
-        if (!isCanceled) {
-            throw new OrderCancellationException("Order cannot be canceled.");
+    @PostMapping("/orders")
+    public ResponseEntity<?> placeOrder(@RequestBody OrderRequestDTO orderRequest, Authentication authentication) {
+        String username = authentication.getName();
+        try {
+            Long orderId = orderService.placeOrder(username, orderRequest.getOrder());
+            return ResponseEntity.ok("Order created in Processing status. Order ID: " + orderId);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-        return ResponseEntity.ok("Order canceled successfully.");
     }
 
-//    @GetMapping("/{orderId}")
-//    public ResponseEntity<?> getOrderStatus(@PathVariable Long orderId) {
-//        String status = orderService.getOrderStatus(orderId);
-//        return ResponseEntity.ok(status);
-//    }
-    @GetMapping("/{orderId}")
-    public ResponseEntity<?> getOrderStatus(
-            @PathVariable Long orderId,
-            @AuthenticationPrincipal UserDetails userDetails
-    ) {
-        String username = userDetails.getUsername();
-        String status = orderService.getOrderStatus(orderId, username);
-        return ResponseEntity.ok(status);
+    // Get all orders
+    @GetMapping("/orders/all")
+    public ResponseEntity<?> getAllOrders(Authentication authentication) {
+        if (isAdmin(authentication)) {
+            // Admin can see all orders
+            return ResponseEntity.ok(adminService.getAllOrders());
+        } else {
+            // Regular user can only see their own orders
+            String username = authentication.getName();
+            return ResponseEntity.ok(orderService.getUserOrders(username));
+        }
     }
 
-    // Retrieve all orders for a specific user
-//    @GetMapping("/user/{userId}")
-//    public ResponseEntity<?> getUserOrders(@PathVariable Long userId) {
-//        List<OrderDTO> orders = orderService.getUserOrders(userId);
-//        return ResponseEntity.ok(orders);
-//    }
-
-    @GetMapping("/my-orders")
-    public ResponseEntity<?> getUserOrders(@AuthenticationPrincipal UserDetails userDetails) {
-        String username = userDetails.getUsername();
-        List<OrderDTO> orders = orderService.getUserOrders(username);
-        return ResponseEntity.ok(orders);
+    // Get order details
+    @GetMapping("/orders/{orderId}")
+    public ResponseEntity<?> getOrderDetails(@PathVariable Long orderId, Authentication authentication) {
+        if (isAdmin(authentication)) {
+            // Admin can see any order
+            return ResponseEntity.ok(adminService.getOrderById(orderId));
+        } else {
+            // User can only see their own orders
+            String username = authentication.getName();
+            try {
+                OrderDTO order = orderService.getOrderDetails(orderId, username);
+                return ResponseEntity.ok(order);
+            } catch (IllegalArgumentException e) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+            }
+        }
     }
 
-//    @GetMapping("/details/{orderId}")
-//    public ResponseEntity<?> getOrderDetails(@PathVariable Long orderId) {
-//        OrderDTO order = orderService.getOrderDetails(orderId);
-//        return ResponseEntity.ok(order);
-//    }
-    @GetMapping("/details/{orderId}")
-    public ResponseEntity<?> getOrderDetails(@PathVariable Long orderId,
-                                             @AuthenticationPrincipal UserDetails userDetails) {
-        String authenticatedUsername = userDetails.getUsername(); // Extract logged-in username
-        OrderDTO order = orderService.getOrderDetails(orderId, authenticatedUsername);
-        return ResponseEntity.ok(order);
+    // Cancel an order
+    @PatchMapping("/orders/{orderId}/cancel")
+    public ResponseEntity<?> cancelOrder(@PathVariable Long orderId, Authentication authentication) {
+        try {
+            if (isAdmin(authentication)) {
+                // Admin can cancel any order
+                boolean isCanceled = orderService.cancelOrder(orderId);
+                if (isCanceled) {
+                    return ResponseEntity.ok("Order canceled successfully.");
+                } else {
+                    return ResponseEntity.badRequest().body("Order cannot be canceled.");
+                }
+            } else {
+                // User can only cancel their own orders
+                String username = authentication.getName();
+                // Verify order belongs to user
+                OrderDTO order = orderService.getOrderDetails(orderId, username);
+
+                boolean isCanceled = orderService.cancelOrder(orderId);
+                if (isCanceled) {
+                    return ResponseEntity.ok("Order canceled successfully.");
+                } else {
+                    return ResponseEntity.badRequest().body("Order cannot be canceled.");
+                }
+            }
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An error occurred: " + e.getMessage());
+        }
     }
 
-    // Retrieve top 3 most frequently purchased items
-//    @GetMapping("/top-frequent/{userId}")
-//    public ResponseEntity<?> getTopFrequentItems(@PathVariable Long userId) {
-//        List<OrderItemDTO> items = orderService.getTopFrequentItems(userId);
-//        return ResponseEntity.ok(items);
-//    }
-//
-//    // Retrieve top 3 most recently purchased items
-//    @GetMapping("/top-recent/{userId}")
-//    public ResponseEntity<?> getTopRecentItems(@PathVariable Long userId) {
-//        List<OrderItemDTO> items = orderService.getTopRecentItems(userId);
-//        return ResponseEntity.ok(items);
-//    }
-    //  Retrieve top 3 most frequently purchased items (Authenticated user only)
-    @GetMapping("/top-frequent")
-    public ResponseEntity<?> getTopFrequentItems(@AuthenticationPrincipal UserDetails userDetails) {
-        String username = userDetails.getUsername();
-        List<OrderItemDTO> items = orderService.getTopFrequentItems(username);
-        return ResponseEntity.ok(items);
+    // Complete order - admin only
+    @PatchMapping("/orders/{orderId}/complete")
+    public ResponseEntity<?> completeOrder(@PathVariable Long orderId, Authentication authentication) {
+        if (!isAdmin(authentication)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied");
+        }
+        try {
+            orderService.completeOrder(orderId);
+            return ResponseEntity.ok("Order completed successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
-
-    //  Retrieve top 3 most recently purchased items (Authenticated user only)
-    @GetMapping("/top-recent")
-    public ResponseEntity<?> getTopRecentItems(@AuthenticationPrincipal UserDetails userDetails) {
-        String username = userDetails.getUsername();
-        List<OrderItemDTO> items = orderService.getTopRecentItems(username);
-        return ResponseEntity.ok(items);
-    }
-
 }
-
