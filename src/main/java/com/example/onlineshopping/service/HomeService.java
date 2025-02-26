@@ -25,10 +25,6 @@ public class HomeService {
     private OrderDao orderDao;
 
     // Fetch all available (in-stock) products.
-    //public List<ProductHibernate> getAvailableProducts() {
-    //return productDao.findAvailableProducts();
-//}
-    // Fetch all available (in-stock) products.
     public List<ProductDTO> getAvailableProducts() {
         List<ProductHibernate> products = productDao.findAvailableProducts();
 

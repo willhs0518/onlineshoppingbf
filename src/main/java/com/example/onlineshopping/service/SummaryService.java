@@ -38,7 +38,7 @@ public class SummaryService {
                     "GROUP BY oi.productHibernate " +
                     "ORDER BY profit DESC";
 
-            List<Object[]> result = session.createQuery(hql).setMaxResults(1).list();
+            List<Object[]> result = session.createQuery(hql).setMaxResults(3).list();
             if (result.isEmpty()) return null;
 
             ProductHibernate product = (ProductHibernate) result.get(0)[0];

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import javax.transaction.Transactional;
 
 @Repository
-@Transactional
+// @Transactional
 public class WatchlistDao extends AbstractHibernateDao<WatchlistHibernate> {
     public WatchlistDao() {
         super(WatchlistHibernate.class);

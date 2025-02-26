@@ -43,6 +43,7 @@ public class ProductHibernate {
     public double getRetailPrice() {return retailPrice;}
     public double getWholesalePrice() {return wholesalePrice;}
 
+    public void setProductId(Long productId) { this.productId = productId;}
     public void setQuantity(int quantity) {this.quantity = quantity;}
     public void setName(String name) {this.name = name;}
     public void setDescription(String description) {this.description = description;}

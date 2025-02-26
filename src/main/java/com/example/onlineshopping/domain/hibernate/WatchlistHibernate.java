@@ -11,14 +11,6 @@ import lombok.*;
 @Table(name = "watchlist")
 @IdClass(WatchlistId.class)
 public class WatchlistHibernate {
-//    @Id
-//    @Column(name = "user_id") // Primary Key part 1
-//    private Long userId;
-//
-//    @Id
-//    @Column(name = "product_id") // Primary Key part 2
-//    private Long productId;
-
     @Id
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false, insertable = false, updatable = false)

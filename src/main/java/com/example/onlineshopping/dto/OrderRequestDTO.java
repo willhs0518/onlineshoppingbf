@@ -9,15 +9,13 @@ import java.util.List;
 @Getter
 @Setter
 public class OrderRequestDTO {
-    //private UserHibernate user;
     private String email;
-    private List<OrderItemRequestDTO> items;
+    private List<OrderItemRequestDTO> order;
 
     public OrderRequestDTO() {}
     public OrderRequestDTO(UserHibernate user, List<OrderItemRequestDTO> items) {}
 
-   // public UserHibernate getUser() {return user;}
-    public List<OrderItemRequestDTO> getItems() {return items;}
+    public List<OrderItemRequestDTO> getOrder() {return order;}
     public String getEmail() {return email;}
 }
 

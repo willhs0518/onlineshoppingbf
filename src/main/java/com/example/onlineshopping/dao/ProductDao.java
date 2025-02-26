@@ -10,7 +10,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 @Repository
-@Transactional
+// @Transactional
 public class ProductDao extends AbstractHibernateDao<ProductHibernate> {
 
     public ProductDao() {
@@ -18,7 +18,6 @@ public class ProductDao extends AbstractHibernateDao<ProductHibernate> {
     }
 
     //Find all available (in-stock) products.
-    @Transactional
     public List<ProductHibernate> findAvailableProducts() {
         Session session = openSession();
         String hql = "FROM ProductHibernate WHERE quantity > 0";
@@ -27,7 +26,6 @@ public class ProductDao extends AbstractHibernateDao<ProductHibernate> {
     }
 
     // Find product by ID.
-    @Transactional
     public ProductHibernate findById(Long productId) {
         Session session = openSession();
         try {
@@ -54,7 +52,6 @@ public class ProductDao extends AbstractHibernateDao<ProductHibernate> {
     }
 
     // Update stock quantity when user purchase.
-    @Transactional
     public void update(ProductHibernate product) {
         Session session = openSession();
         Transaction tx = session.beginTransaction();

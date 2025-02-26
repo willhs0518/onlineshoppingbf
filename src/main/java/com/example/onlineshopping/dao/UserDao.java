@@ -10,13 +10,12 @@ import javax.persistence.criteria.Root;
 import javax.transaction.*;
 
 @Repository
-@Transactional
+// @Transactional
 public class UserDao extends AbstractHibernateDao<UserHibernate> {
     public UserDao() {
         super(UserHibernate.class);
     }
 
-    @Transactional
     public UserHibernate findByUsername(String username) {
         Session session = openSession();
         try {
@@ -31,7 +30,6 @@ public class UserDao extends AbstractHibernateDao<UserHibernate> {
 
     }
 
-    @Transactional
     public UserHibernate findByEmail(String email) {
         Session session = openSession();
         try {
@@ -48,7 +46,6 @@ public class UserDao extends AbstractHibernateDao<UserHibernate> {
         }
     }
 
-    @Transactional
     public UserHibernate findById(Long id) {
         Session session = openSession();
         try {

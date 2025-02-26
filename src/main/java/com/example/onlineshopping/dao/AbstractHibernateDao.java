@@ -12,7 +12,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @Repository
-@Transactional
+// @Transactional
 public abstract class AbstractHibernateDao<T> {
     @Autowired
     protected SessionFactory sessionFactory;
@@ -24,19 +24,11 @@ public abstract class AbstractHibernateDao<T> {
 
     public Session openSession() {
         return sessionFactory.openSession();
-        //return sessionFactory.Session();
     }
 
     public void save(T entity) {
         openSession().save(entity);
     }
-
-//    public T save(T entity) {
-//        Session session = openSession();
-//        session.save(entity);
-//        session.flush();  // Ensure the save is pushed to the database
-//        return entity;
-//    }
 
     public void update(T entity) {
         openSession().update(entity);

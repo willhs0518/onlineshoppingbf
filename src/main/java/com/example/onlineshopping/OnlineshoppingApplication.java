@@ -6,7 +6,6 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfigurat
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication(exclude = HibernateJpaAutoConfiguration.class)
-// @SpringBootApplication
 public class OnlineshoppingApplication {
     public static void main(String[] args) {
         SpringApplication.run(OnlineshoppingApplication.class, args);
