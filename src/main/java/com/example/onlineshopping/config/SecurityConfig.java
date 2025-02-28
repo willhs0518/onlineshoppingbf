@@ -30,6 +30,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         System.out.println("=== Security Config Initialization ===");
         http
+                .cors().and()
                 .csrf().disable()
                 .authorizeHttpRequests(auth -> auth
                         // Public endpoints that don't require authentication

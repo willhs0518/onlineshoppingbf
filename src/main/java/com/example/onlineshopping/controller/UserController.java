@@ -32,7 +32,10 @@ public class UserController {
         }
 
         userService.register(user);
-        return ResponseEntity.ok("User registered successfully");
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "User registered successfully");
+
+        return ResponseEntity.ok(response);
     }
 
     // Endpoint for admin registration
@@ -44,7 +47,10 @@ public class UserController {
 
         user.setRole(0); // Set admin role
         userService.registerAdmin(user);
-        return ResponseEntity.ok("Admin user registered successfully");
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Admin user registered successfully");
+
+        return ResponseEntity.ok(response);
     }
 
     /**
