@@ -1,0 +1,52 @@
+<!-- product-list.component.html -->
+<div class="product-list-container">
+    <h2>Products</h2>
+    
+    <div *ngIf="loading" class="loading">Loading products...</div>
+    
+    <div *ngIf="error" class="error">{{ error }}</div>
+    
+    <div class="table-container" *ngIf="!loading && !error">
+      <table mat-table [dataSource]="products" class="product-table">
+        <!-- Name Column -->
+        <!-- In product-list.component.html -->
+        <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef> Product </th>
+            <td mat-cell *matCellDef="let product"> 
+              <a [routerLink]="['/product-detail', product.productId]">{{ product.name }}</a>
+            </td>
+          </ng-container>
+        
+        <!-- Description Column -->
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef> Description </th>
+          <td mat-cell *matCellDef="let product"> {{ product.description }} </td>
+        </ng-container>
+        
+        <!-- Price Column -->
+        <ng-container matColumnDef="price">
+          <th mat-header-cell *matHeaderCellDef> Price </th>
+          <td mat-cell *matCellDef="let product"> {{ product.retailPrice | currency }} </td>
+        </ng-container>
+        
+        <!-- Actions Column -->
+<!-- product-list.component.html (update the actions column) -->
+        <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef> Actions </th>
+            <td mat-cell *matCellDef="let product" class="action-buttons"> 
+              <div class="button-container">
+                <button mat-button class="add-to-cart-btn" (click)="addToCart(product)">
+                  Add to Cart
+                </button>
+                <button mat-button class="watchlist-btn" (click)="addToWatchlist(product)">
+                  Add to Watchlist
+                </button>
+              </div>
+            </td>
+        </ng-container>
+    
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+  </div>
