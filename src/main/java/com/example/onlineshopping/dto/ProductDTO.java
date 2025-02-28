@@ -20,7 +20,8 @@ public class ProductDTO {
     }
 
     // All-args constructor
-    public ProductDTO(String name, String description, double retailPrice) {
+    public ProductDTO(Long ProductId, String name, String description, double retailPrice) {
+        this.productId = ProductId;
         this.name = name;
         this.description = description;
         this.retailPrice = retailPrice;
@@ -43,6 +44,9 @@ public class ProductDTO {
     public void setName(String name) {
         this.name = name;
     }
+
+    public Long getProductId() { return productId; }
+    public void setProductId(Long productId) { this.productId = productId; }
 
     public String getDescription() {
         return description;

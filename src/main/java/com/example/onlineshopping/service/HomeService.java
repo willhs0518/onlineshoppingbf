@@ -31,6 +31,7 @@ public class HomeService {
         // Convert ProductHibernate to ProductDTO to include only name, description, and retailPrice
         return products.stream()
                 .map(product -> new ProductDTO(
+                        product.getProductId(),
                         product.getName(),
                         product.getDescription(),
                         product.getRetailPrice()
@@ -45,7 +46,7 @@ public class HomeService {
         if (product == null) {
             throw new IllegalArgumentException("Product not found.");
         }
-        return new ProductDTO(product.getName(), product.getDescription(), product.getRetailPrice());
+        return new ProductDTO(product.getProductId(),product.getName(), product.getDescription(), product.getRetailPrice());
     }
 
     @Transactional
