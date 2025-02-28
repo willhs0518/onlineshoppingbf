@@ -1,0 +1,40 @@
+order-detail.component.html
+<div class="order-detail-container">
+    <h2>Order Details</h2>
+    
+    <div *ngIf="loading" class="loading">Loading order details...</div>
+    
+    <div *ngIf="error" class="error">{{ error }}</div>
+    
+    <div *ngIf="!loading && !error && orderDetails" class="order-info">
+      <div class="info-row">
+        <span class="label">Order ID:</span>
+        <span class="value">{{ orderDetails.orderId }}</span>
+      </div>
+      
+      <div class="info-row">
+        <span class="label">Status:</span>
+        <span class="value">{{ orderDetails.orderStatus }}</span>
+      </div>
+      
+      <div class="info-row">
+        <span class="label">Date Placed:</span>
+        <span class="value">{{ orderDetails.datePlaced | date:'medium' }}</span>
+      </div>
+      
+      <h3>Items</h3>
+     <!-- In order-detail.component.html, where you list the items -->
+        <div class="items-list" *ngIf="orderDetails.items && orderDetails.items.length">
+            <div class="item" *ngFor="let item of orderDetails.items">
+              <span class="item-name">
+                <a [routerLink]="['/product-detail', item.productId]" [queryParams]="{orderId: orderId}">{{ item.name }}</a>
+              </span>
+              <span class="item-quantity">Qty: {{ item.quantity }}</span>
+              <span class="item-price">{{ item.price | currency }}</span>
+            </div>
+          </div>
+
+      
+          <button mat-button color="primary" (click)="goBack()">Back</button>
+    </div>
+  </div>

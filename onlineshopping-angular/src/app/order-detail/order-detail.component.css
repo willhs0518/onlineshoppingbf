@@ -1,0 +1,85 @@
+/* order-detail.component.css */
+.order-detail-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 24px;
+  }
+  
+  h2 {
+    margin-bottom: 24px;
+    color: #333;
+  }
+  
+  h3 {
+    margin-top: 24px;
+    margin-bottom: 16px;
+    color: #555;
+  }
+  
+  .loading, .error {
+    padding: 20px;
+    text-align: center;
+    background-color: #f8f8f8;
+    border-radius: 4px;
+    margin-bottom: 20px;
+  }
+  
+  .error {
+    color: #d32f2f;
+    background-color: #ffebee;
+  }
+  
+  .info-row {
+    display: flex;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  
+  .label {
+    font-weight: 500;
+    width: 140px;
+    color: #555;
+  }
+  
+  .value {
+    flex: 1;
+  }
+  
+  .items-list {
+    margin-bottom: 24px;
+  }
+  
+  .item {
+    display: flex;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  
+  .item-name {
+    flex: 1;
+  }
+  
+  .item-quantity {
+    width: 80px;
+    text-align: right;
+  }
+  
+  .item-price {
+    width: 100px;
+    text-align: right;
+    font-weight: 500;
+  }
+  
+  .total {
+    display: flex;
+    margin-top: 24px;
+    padding-top: 12px;
+    border-top: 2px solid #eee;
+    font-size: 18px;
+    font-weight: 500;
+  }
+  
+  button {
+    margin-top: 32px;
+  }
